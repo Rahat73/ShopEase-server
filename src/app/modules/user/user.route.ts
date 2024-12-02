@@ -10,25 +10,24 @@ const router = Router();
 
 router.post(
   "/create-admin",
-  //   auth(Role.SUPER_ADMIN, Role.ADMIN),
+  auth(Role.SUPER_ADMIN, Role.ADMIN),
   fileUpload.single("file"),
   Validator.validateRequestWithFiles(UserValidationSchemas.createAdmin),
   UserControllers.createAdmin
 );
 
-// router.post(
-//   "/create-doctor",
-//   auth(UserRole.SUPER_ADMIN, Role.ADMIN),
-//   fileUploader.upload.single("profile_image"),
-//   Validator.validateRequestWithFiles(UserValidationSchemas.createDoctor),
-//   UserControllers.createDoctor
-// );
+router.post(
+  "/create-vendor",
+  fileUpload.single("file"),
+  Validator.validateRequestWithFiles(UserValidationSchemas.createVendor),
+  UserControllers.createVendor
+);
 
-// router.post(
-//   "/create-patient",
-//   fileUploader.upload.single("profile_image"),
-//   Validator.validateRequestWithFiles(UserValidationSchemas.createPatient),
-//   UserControllers.createPatient
-// );
+router.post(
+  "/create-customer",
+  fileUpload.single("file"),
+  Validator.validateRequestWithFiles(UserValidationSchemas.createCustomer),
+  UserControllers.createCustomer
+);
 
 export const UserRoutes = router;

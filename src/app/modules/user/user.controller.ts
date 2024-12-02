@@ -13,6 +13,28 @@ const createAdmin = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const createVendor = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserServices.createVendor(req);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Vendor created successfuly!",
+    data: result,
+  });
+});
+
+const createCustomer = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserServices.createCustomer(req);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Customer created successfuly!",
+    data: result,
+  });
+});
+
 export const UserControllers = {
   createAdmin,
+  createVendor,
+  createCustomer,
 };
