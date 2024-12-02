@@ -33,8 +33,20 @@ const createCustomer = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const changeStatus = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await UserServices.changeStatus(id);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Status changed successfuly!",
+    data: result,
+  });
+});
+
 export const UserControllers = {
   createAdmin,
   createVendor,
   createCustomer,
+  changeStatus,
 };

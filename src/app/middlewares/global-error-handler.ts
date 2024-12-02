@@ -26,6 +26,7 @@ const globalErrorHandler = (
       error = err.meta;
     } else if (err.code === "P2025") {
       statusCode = 404;
+      message = "Record not found";
     }
   } else if (err instanceof ZodError) {
     statusCode = 400;
@@ -39,7 +40,7 @@ const globalErrorHandler = (
     success,
     status: statusCode,
     message,
-    // error,
+    err,
   });
 };
 

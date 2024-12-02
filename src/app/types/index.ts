@@ -1,3 +1,5 @@
+import { Role } from "@prisma/client";
+
 export interface IFile {
   fieldname: string;
   originalname: string;
@@ -7,3 +9,8 @@ export interface IFile {
   size: number;
   filename: string;
 }
+
+export type IAuthUser = {
+  email: string;
+  role: Role;
+} | null;

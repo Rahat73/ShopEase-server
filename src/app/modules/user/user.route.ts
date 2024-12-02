@@ -30,4 +30,10 @@ router.post(
   UserControllers.createCustomer
 );
 
+router.patch(
+  "/change-status/:id",
+  auth(Role.SUPER_ADMIN, Role.ADMIN),
+  UserControllers.changeStatus
+);
+
 export const UserRoutes = router;

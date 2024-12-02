@@ -94,8 +94,27 @@ const createCustomer = async (req: Request): Promise<Customer> => {
   return result;
 };
 
+const changeStatus = async (id: string) => {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: {
+      id: id,
+    },
+  });
+
+  const result = await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      isSuspended: !user.isSuspended,
+    },
+  });
+  return result;
+};
+
 export const UserServices = {
   createAdmin,
   createVendor,
   createCustomer,
+  changeStatus,
 };
