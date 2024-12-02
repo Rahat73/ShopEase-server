@@ -15,4 +15,21 @@ const validateRequest =
     }
   };
 
-export default validateRequest;
+const validateRequestWithFiles =
+  (schema: AnyZodObject) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const parsedBody = await schema.parseAsync({
+        body: JSON.parse(req.body.data),
+      });
+      req.body = parsedBody.body;
+      return next();
+    } catch (err) {
+      next(err);
+    }
+  };
+
+export const Validator = {
+  validateRequest,
+  validateRequestWithFiles,
+};

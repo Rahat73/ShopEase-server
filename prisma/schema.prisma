@@ -33,7 +33,7 @@ model Admin {
   id           String   @id @default(uuid())
   email        String   @unique
   name         String
-  phone        String?
+  phone        String
   profilePhoto String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -76,6 +76,7 @@ model Customer {
 }
 
 enum Role {
+  SUPER_ADMIN
   ADMIN
   VENDOR
   CUSTOMER
