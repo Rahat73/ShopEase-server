@@ -1,5 +1,12 @@
 import { Role } from "@prisma/client";
 
+export type IDataDisplayOptions = {
+  page?: number;
+  limit?: number;
+  sortBy?: string | undefined;
+  sortOrder?: string | undefined;
+};
+
 export interface IFile {
   fieldname: string;
   originalname: string;

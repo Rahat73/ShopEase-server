@@ -23,12 +23,36 @@ const addProduct = z.object({
       })
       .int({ message: "Inventory count must be an integer." })
       .nonnegative({ message: "Inventory count cannot be negative." }),
+    images: z.array(z.string()).optional(),
     categoryId: z.string({
       required_error: "Category Id is required!",
     }),
   }),
 });
 
+const updateProduct = z.object({
+  body: z.object({
+    name: z.string().optional(),
+    description: z.string().optional(),
+    price: z
+      .number()
+      .positive({ message: "Price must be a positive number." })
+      .optional(),
+    discount: z
+      .number()
+      .positive({ message: "Price must be a positive number." })
+      .optional(),
+    inventoryCount: z
+      .number()
+      .int({ message: "Inventory count must be an integer." })
+      .nonnegative({ message: "Inventory count cannot be negative." })
+      .optional(),
+    images: z.array(z.string()).optional(),
+    categoryId: z.string().optional(),
+  }),
+});
+
 export const ProductValidationSchemas = {
   addProduct,
+  updateProduct,
 };
