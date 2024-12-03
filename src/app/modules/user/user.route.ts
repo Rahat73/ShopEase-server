@@ -8,6 +8,12 @@ import { UserControllers } from "./user.controller";
 
 const router = Router();
 
+router.get(
+  "/me",
+  auth(Role.SUPER_ADMIN, Role.ADMIN, Role.VENDOR, Role.CUSTOMER),
+  UserControllers.getMyProfile
+);
+
 router.post(
   "/create-admin",
   auth(Role.SUPER_ADMIN, Role.ADMIN),

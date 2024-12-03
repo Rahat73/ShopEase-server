@@ -1,5 +1,5 @@
 import { Admin, Customer, Role, Vendor } from "@prisma/client";
-import { IFile } from "../../types";
+import { IAuthUser, IFile } from "../../types";
 import { Request } from "express";
 import * as bcrypt from "bcrypt";
 import prisma from "../../utils/prisma";
@@ -94,6 +94,98 @@ const createCustomer = async (req: Request): Promise<Customer> => {
   return result;
 };
 
+const getMyProfile = async (user: IAuthUser) => {
+  const userInfo = await prisma.user.findUniqueOrThrow({
+    where: {
+      email: user?.email,
+      isSuspended: false,
+    },
+    select: {
+      id: true,
+      email: true,
+      role: true,
+    },
+  });
+
+  let profileInfo;
+
+  if (userInfo.role === Role.SUPER_ADMIN) {
+    profileInfo = await prisma.admin.findUnique({
+      where: {
+        email: userInfo.email,
+      },
+    });
+  } else if (userInfo.role === Role.ADMIN) {
+    profileInfo = await prisma.admin.findUnique({
+      where: {
+        email: userInfo.email,
+      },
+    });
+  } else if (userInfo.role === Role.VENDOR) {
+    profileInfo = await prisma.vendor.findUnique({
+      where: {
+        email: userInfo.email,
+      },
+    });
+  } else if (userInfo.role === Role.CUSTOMER) {
+    profileInfo = await prisma.customer.findUnique({
+      where: {
+        email: userInfo.email,
+      },
+    });
+  }
+
+  return { ...userInfo, ...profileInfo };
+};
+
+const updateMyProfie = async (user: IAuthUser, req: Request) => {
+  const userInfo = await prisma.user.findUniqueOrThrow({
+    where: {
+      email: user?.email,
+      isSuspended: false,
+    },
+  });
+
+  const file = req.file as IFile;
+  if (file) {
+    req.body.profilePhoto = file.path;
+  }
+
+  let profileInfo;
+
+  if (userInfo.role === Role.SUPER_ADMIN) {
+    profileInfo = await prisma.admin.update({
+      where: {
+        email: userInfo.email,
+      },
+      data: req.body,
+    });
+  } else if (userInfo.role === Role.ADMIN) {
+    profileInfo = await prisma.admin.update({
+      where: {
+        email: userInfo.email,
+      },
+      data: req.body,
+    });
+  } else if (userInfo.role === Role.VENDOR) {
+    profileInfo = await prisma.vendor.update({
+      where: {
+        email: userInfo.email,
+      },
+      data: req.body,
+    });
+  } else if (userInfo.role === Role.CUSTOMER) {
+    profileInfo = await prisma.customer.update({
+      where: {
+        email: userInfo.email,
+      },
+      data: req.body,
+    });
+  }
+
+  return { ...profileInfo };
+};
+
 const changeStatus = async (id: string) => {
   const user = await prisma.user.findUniqueOrThrow({
     where: {
@@ -116,5 +208,7 @@ export const UserServices = {
   createAdmin,
   createVendor,
   createCustomer,
+  getMyProfile,
+  updateMyProfie,
   changeStatus,
 };

@@ -55,7 +55,8 @@ model Vendor {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  user User @relation(fields: [email], references: [email])
+  user    User      @relation(fields: [email], references: [email])
+  product Product[]
 
   @@map("vendors")
 }
@@ -73,6 +74,39 @@ model Customer {
   user User @relation(fields: [email], references: [email])
 
   @@map("customers")
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  icon        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  products Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id             String   @id @default(uuid())
+  name           String
+  description    String
+  price          Float
+  discount       Float    @default(0)
+  inventoryCount Int
+  images         String[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  vendorId String
+  vendor   Vendor @relation(fields: [vendorId], references: [id])
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  @@map("products")
 }
 
 enum Role {
