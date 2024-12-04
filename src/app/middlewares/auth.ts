@@ -3,6 +3,7 @@ import { Secret } from "jsonwebtoken";
 import AppError from "../errors/app-error";
 import { jwtHelpers } from "../utils/jwt-helpers";
 import config from "../config";
+import prisma from "../utils/prisma";
 
 const auth = (...roles: string[]) => {
   return async (
@@ -23,6 +24,13 @@ const auth = (...roles: string[]) => {
       );
 
       req.user = verifiedUser;
+
+      await prisma.user.findUniqueOrThrow({
+        where: {
+          email: verifiedUser.email,
+          isSuspended: false,
+        },
+      });
 
       if (roles.length && !roles.includes(verifiedUser.role)) {
         throw new AppError(403, "Forbidden!");
