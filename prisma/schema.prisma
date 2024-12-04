@@ -59,6 +59,7 @@ model Vendor {
   product Product[]
 
   order Order[]
+  cart  Cart[]
 
   @@map("vendors")
 }
@@ -77,6 +78,7 @@ model Customer {
 
   order  Order[]
   review Review[]
+  cart   Cart?
 
   @@map("customers")
 }
@@ -113,6 +115,7 @@ model Product {
 
   orderItem OrderItem[]
   review    Review[]
+  cartItem  CartItem[]
 
   @@map("products")
 }
@@ -137,9 +140,8 @@ model Order {
 }
 
 model OrderItem {
-  id       String @id @default(uuid())
   quantity Int
-  price    Float  @default(0)
+  price    Float @default(0)
 
   productId String
   product   Product @relation(fields: [productId], references: [id])
@@ -147,7 +149,39 @@ model OrderItem {
   orderId String
   order   Order  @relation(fields: [orderId], references: [id])
 
+  @@id([orderId, productId])
   @@map("order_items")
+}
+
+model Cart {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cartItems CartItem[]
+
+  customerId String   @unique
+  customer   Customer @relation(fields: [customerId], references: [id])
+
+  vendorId String
+  vendor   Vendor @relation(fields: [vendorId], references: [id])
+
+  @@map("carts")
+}
+
+model CartItem {
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cartId String
+  cart   Cart   @relation(fields: [cartId], references: [id])
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@id([cartId, productId])
+  @@map("cart_items")
 }
 
 model Review {

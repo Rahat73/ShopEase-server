@@ -13,6 +13,12 @@ router.get(
   OrderControllers.getAllOrders
 );
 
+router.get(
+  "/my-orders",
+  auth(Role.VENDOR, Role.CUSTOMER),
+  OrderControllers.getMyOrders
+);
+
 router.post(
   "/",
   auth(Role.SUPER_ADMIN, Role.ADMIN, Role.CUSTOMER),

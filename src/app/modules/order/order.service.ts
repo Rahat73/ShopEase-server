@@ -1,8 +1,8 @@
-import { Order, Product } from "@prisma/client";
-import { IAuthUser, IDataDisplayOptions } from "../../types";
-import prisma from "../../utils/prisma";
+import { Order, Prisma } from "@prisma/client";
 import AppError from "../../errors/app-error";
+import { IAuthUser, IDataDisplayOptions } from "../../types";
 import { dataDisplayHelper } from "../../utils/data-display-helper";
+import prisma from "../../utils/prisma";
 import { orderSortableFields } from "./order.constant";
 
 const createOrder = async (
@@ -40,8 +40,6 @@ const createOrder = async (
     },
     0
   );
-
-  console.log(totalAmount);
 
   const result = await prisma.$transaction(async (transactionClient) => {
     const createdOrder = await transactionClient.order.create({
@@ -103,7 +101,59 @@ const getAllOrders = async (options: IDataDisplayOptions) => {
   };
 };
 
+const getMyOrders = async (user: IAuthUser, options: IDataDisplayOptions) => {
+  let userInfo;
+
+  if (user?.role === "CUSTOMER") {
+    userInfo = await prisma.customer.findUniqueOrThrow({
+      where: {
+        email: user?.email,
+      },
+    });
+  } else if (user?.role === "VENDOR") {
+    userInfo = await prisma.vendor.findUniqueOrThrow({
+      where: {
+        email: user?.email,
+      },
+    });
+  }
+
+  const { page, limit, skip, sortBy, sortOrder } =
+    dataDisplayHelper.calculatePagination(options, orderSortableFields);
+
+  const whereConditions: Prisma.OrderWhereInput = {
+    customerId: user?.role === "CUSTOMER" ? userInfo?.id : undefined,
+    vendorId: user?.role === "VENDOR" ? userInfo?.id : undefined,
+  };
+
+  const result = await prisma.order.findMany({
+    where: whereConditions,
+    skip,
+    take: limit,
+    orderBy: {
+      [sortBy]: sortOrder,
+    },
+    include: {
+      orderItems: true,
+    },
+  });
+
+  const total = await prisma.order.count({
+    where: whereConditions,
+  });
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
+};
+
 export const OrderServices = {
   createOrder,
   getAllOrders,
+  getMyOrders,
 };

@@ -29,11 +29,30 @@ const getAllOrders = catchAsync(async (req: Request, res: Response) => {
     statusCode: 200,
     success: true,
     message: "Orders fetched successfully!",
-    data: result,
+    meta: result.meta,
+    data: result.data,
   });
 });
+
+const getMyOrders = catchAsync(
+  async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const user = req.user;
+    //   const filters = pick(req.query, orderFilterableFields);
+    const options = pick(req.query, dataDisplayOptions);
+
+    const result = await OrderServices.getMyOrders(user as IAuthUser, options);
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Orders fetched successfully!",
+      meta: result.meta,
+      data: result.data,
+    });
+  }
+);
 
 export const OrderControllers = {
   createOrder,
   getAllOrders,
+  getMyOrders,
 };
