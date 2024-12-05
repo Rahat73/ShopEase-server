@@ -14,4 +14,8 @@ router.post(
   CartControllers.addToCart
 );
 
+router.get("/", auth(Role.CUSTOMER), CartControllers.getMyCart);
+
+router.delete("/:id", auth(Role.CUSTOMER), CartControllers.deleteCartItem);
+
 export const CartRoutes = router;

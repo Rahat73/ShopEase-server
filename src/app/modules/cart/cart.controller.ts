@@ -17,6 +17,38 @@ const addToCart = catchAsync(
   }
 );
 
+const getMyCart = catchAsync(
+  async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const user = req.user;
+    const result = await CartServices.getMyCart(user as IAuthUser);
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Cart fetched successfully!",
+      data: result,
+    });
+  }
+);
+
+const deleteCartItem = catchAsync(
+  async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const user = req.user;
+    const cartItemId = req.params.id;
+    const result = await CartServices.deleteCartItem(
+      user as IAuthUser,
+      cartItemId
+    );
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Cart item deleted successfully!",
+      data: result,
+    });
+  }
+);
+
 export const CartControllers = {
   addToCart,
+  getMyCart,
+  deleteCartItem,
 };

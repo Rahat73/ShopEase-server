@@ -19,7 +19,7 @@ const addToCart = async (
     },
   });
 
-  const existingCart = await prisma.cart.findUnique({
+  const existingCart = await prisma.cart.findUniqueOrThrow({
     where: {
       customerId: customerInfo.id,
     },
@@ -43,6 +43,7 @@ const addToCart = async (
       );
 
       if (existingCartItem) {
+        console.log(existingCart.id, cartItem.productId);
         await tx.cartItem.update({
           where: {
             cartId_productId: {
@@ -83,11 +84,7 @@ const addToCart = async (
         customerId: customerInfo.id,
       },
       include: {
-        cartItems: {
-          include: {
-            product: true,
-          },
-        },
+        cartItems: true,
       },
     });
 
@@ -97,6 +94,72 @@ const addToCart = async (
   return result;
 };
 
+const getMyCart = async (user: IAuthUser) => {
+  const customerInfo = await prisma.customer.findUniqueOrThrow({
+    where: {
+      email: user?.email,
+    },
+  });
+
+  const result = await prisma.cart.findUniqueOrThrow({
+    where: {
+      customerId: customerInfo.id,
+    },
+    include: {
+      cartItems: true,
+    },
+  });
+
+  return result;
+};
+
+const deleteCartItem = async (user: IAuthUser, cartItemId: string) => {
+  const customerInfo = await prisma.customer.findUniqueOrThrow({
+    where: {
+      email: user?.email,
+    },
+  });
+
+  const existingCart = await prisma.cart.findUniqueOrThrow({
+    where: {
+      customerId: customerInfo.id,
+    },
+    include: {
+      cartItems: true,
+    },
+  });
+
+  const existingCartItem = existingCart.cartItems.find(
+    (item) => item.productId === cartItemId
+  );
+
+  if (!existingCartItem) {
+    throw new AppError(409, "Cart item does not exist.");
+  }
+
+  await prisma.cartItem.delete({
+    where: {
+      cartId_productId: {
+        cartId: existingCart.id,
+        productId: cartItemId,
+      },
+    },
+  });
+
+  const result = await prisma.cart.findMany({
+    where: {
+      customerId: customerInfo.id,
+    },
+    include: {
+      cartItems: true,
+    },
+  });
+
+  return result;
+};
+
 export const CartServices = {
   addToCart,
+  getMyCart,
+  deleteCartItem,
 };
