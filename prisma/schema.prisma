@@ -77,10 +77,11 @@ model Customer {
 
   user User @relation(fields: [email], references: [email])
 
-  order  Order[]
-  review Review[]
-  cart   Cart?
-  follow Follow[]
+  order         Order[]
+  review        Review[]
+  cart          Cart?
+  follow        Follow[]
+  recentProduct RecentProduct[]
 
   @@map("customers")
 }
@@ -115,9 +116,10 @@ model Product {
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id])
 
-  orderItem OrderItem[]
-  review    Review[]
-  cartItem  CartItem[]
+  orderItem     OrderItem[]
+  review        Review[]
+  cartItem      CartItem[]
+  recentProduct RecentProduct[]
 
   @@map("products")
 }
@@ -198,6 +200,20 @@ model Follow {
 
   @@id([customerId, vendorId])
   @@map("follows")
+}
+
+model RecentProduct {
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([customerId, productId])
+  @@map("recent_products")
 }
 
 model Review {
