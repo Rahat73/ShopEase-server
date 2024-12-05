@@ -19,7 +19,7 @@ const addToCart = async (
     },
   });
 
-  const existingCart = await prisma.cart.findUniqueOrThrow({
+  const existingCart = await prisma.cart.findUnique({
     where: {
       customerId: customerInfo.id,
     },
@@ -43,7 +43,6 @@ const addToCart = async (
       );
 
       if (existingCartItem) {
-        console.log(existingCart.id, cartItem.productId);
         await tx.cartItem.update({
           where: {
             cartId_productId: {

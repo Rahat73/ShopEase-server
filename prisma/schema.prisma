@@ -58,8 +58,9 @@ model Vendor {
   user    User      @relation(fields: [email], references: [email])
   product Product[]
 
-  order Order[]
-  cart  Cart[]
+  order  Order[]
+  cart   Cart[]
+  follow Follow[]
 
   @@map("vendors")
 }
@@ -79,6 +80,7 @@ model Customer {
   order  Order[]
   review Review[]
   cart   Cart?
+  follow Follow[]
 
   @@map("customers")
 }
@@ -182,6 +184,20 @@ model CartItem {
 
   @@id([cartId, productId])
   @@map("cart_items")
+}
+
+model Follow {
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  vendorId String
+  vendor   Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@id([customerId, vendorId])
+  @@map("follows")
 }
 
 model Review {
