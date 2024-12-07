@@ -29,7 +29,10 @@ const changePassword = catchAsync(
   async (req: Request & { user?: IAuthUser }, res: Response) => {
     const user = req.user;
 
-    const result = await AuthServices.changePassword(user, req.body);
+    const result = await AuthServices.changePassword(
+      user as IAuthUser,
+      req.body
+    );
 
     sendResponse(res, {
       statusCode: 200,

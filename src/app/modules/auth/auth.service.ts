@@ -5,6 +5,7 @@ import { jwtHelpers } from "../../utils/jwt-helpers";
 import prisma from "../../utils/prisma";
 import * as bcrypt from "bcrypt";
 import emailSender from "../../utils/email-sender";
+import { IAuthUser } from "../../types";
 
 const loginUser = async (payload: { email: string; password: string }) => {
   const userData = await prisma.user.findUniqueOrThrow({
@@ -59,10 +60,13 @@ const loginUser = async (payload: { email: string; password: string }) => {
   };
 };
 
-const changePassword = async (user: any, payload: any) => {
+const changePassword = async (
+  user: IAuthUser,
+  payload: Record<string, string>
+) => {
   const userData = await prisma.user.findUniqueOrThrow({
     where: {
-      email: user.email,
+      email: user?.email,
       isSuspended: false,
     },
   });
@@ -131,7 +135,7 @@ const resetPassword = async (
   token: string,
   payload: { id: string; password: string }
 ) => {
-  const userData = await prisma.user.findUniqueOrThrow({
+  await prisma.user.findUniqueOrThrow({
     where: {
       id: payload.id,
       isSuspended: false,

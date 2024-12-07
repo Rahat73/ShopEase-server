@@ -1,10 +1,13 @@
-import { Admin, Customer, Role, Vendor } from "@prisma/client";
-import { IAuthUser, IFile } from "../../types";
-import { Request } from "express";
+import { Role } from "@prisma/client";
 import * as bcrypt from "bcrypt";
+import { Request } from "express";
+import { Secret } from "jsonwebtoken";
+import config from "../../config";
+import { IAuthUser, IFile } from "../../types";
+import { jwtHelpers } from "../../utils/jwt-helpers";
 import prisma from "../../utils/prisma";
 
-const createAdmin = async (req: Request): Promise<Admin> => {
+const createAdmin = async (req: Request) => {
   const file = req.file as IFile;
 
   if (file) {
@@ -31,10 +34,22 @@ const createAdmin = async (req: Request): Promise<Admin> => {
     return createdAdminData;
   });
 
-  return result;
+  const accessToken = jwtHelpers.generateToken(
+    {
+      email: userData.email,
+      role: userData.role,
+    },
+    config.jwt.jwt_secret as Secret,
+    config.jwt.expires_in as string
+  );
+
+  return {
+    user: result,
+    accessToken,
+  };
 };
 
-const createVendor = async (req: Request): Promise<Vendor> => {
+const createVendor = async (req: Request) => {
   const file = req.file as IFile;
 
   if (file) {
@@ -61,10 +76,22 @@ const createVendor = async (req: Request): Promise<Vendor> => {
     return createdVendorData;
   });
 
-  return result;
+  const accessToken = jwtHelpers.generateToken(
+    {
+      email: userData.email,
+      role: userData.role,
+    },
+    config.jwt.jwt_secret as Secret,
+    config.jwt.expires_in as string
+  );
+
+  return {
+    user: result,
+    accessToken,
+  };
 };
 
-const createCustomer = async (req: Request): Promise<Customer> => {
+const createCustomer = async (req: Request) => {
   const file = req.file as IFile;
 
   if (file) {
@@ -91,7 +118,19 @@ const createCustomer = async (req: Request): Promise<Customer> => {
     return createdCustomerData;
   });
 
-  return result;
+  const accessToken = jwtHelpers.generateToken(
+    {
+      email: userData.email,
+      role: userData.role,
+    },
+    config.jwt.jwt_secret as Secret,
+    config.jwt.expires_in as string
+  );
+
+  return {
+    user: result,
+    accessToken,
+  };
 };
 
 const getMyProfile = async (user: IAuthUser) => {
