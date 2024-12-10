@@ -10,6 +10,8 @@ export const productFilterableFields = [
 export const productSortableFields = [
   "name",
   "price",
+  "inventoryCount",
+  "soldCount",
   "discount",
   "createdAt",
   "updatedAt",

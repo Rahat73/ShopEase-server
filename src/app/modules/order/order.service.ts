@@ -65,7 +65,10 @@ const createOrder = async (
       productsDetails.map(({ productInfo, quantity }) =>
         transactionClient.product.update({
           where: { id: productInfo.id },
-          data: { inventoryCount: productInfo.inventoryCount - quantity },
+          data: {
+            inventoryCount: productInfo.inventoryCount - quantity,
+            soldCount: productInfo.soldCount + quantity,
+          },
         })
       )
     );

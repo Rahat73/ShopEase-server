@@ -106,6 +106,7 @@ model Product {
   price          Float
   discount       Float    @default(0)
   inventoryCount Int
+  soldCount      Int      @default(0)
   images         String[]
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
