@@ -11,6 +11,15 @@ const addToCart = z.object({
   }),
 });
 
+const updateCartItemQuantity = z.object({
+  body: z.object({
+    quantity: z.number({
+      required_error: "Quantity is required",
+    }),
+  }),
+});
+
 export const CartValidationSchemas = {
   addToCart,
+  updateCartItemQuantity,
 };

@@ -105,14 +105,22 @@ const getMyCart = async (user: IAuthUser) => {
       customerId: customerInfo.id,
     },
     include: {
-      cartItems: true,
+      cartItems: {
+        include: {
+          product: true,
+        },
+      },
     },
   });
 
   return result;
 };
 
-const deleteCartItem = async (user: IAuthUser, cartItemId: string) => {
+const updateCartItemQuantity = async (
+  user: IAuthUser,
+  productId: string,
+  quantity: number
+) => {
   const customerInfo = await prisma.customer.findUniqueOrThrow({
     where: {
       email: user?.email,
@@ -129,7 +137,55 @@ const deleteCartItem = async (user: IAuthUser, cartItemId: string) => {
   });
 
   const existingCartItem = existingCart.cartItems.find(
-    (item) => item.productId === cartItemId
+    (item) => item.productId === productId
+  );
+
+  if (!existingCartItem) {
+    throw new AppError(409, "Cart item does not exist.");
+  }
+
+  await prisma.cartItem.update({
+    where: {
+      cartId_productId: {
+        cartId: existingCart.id,
+        productId: productId,
+      },
+    },
+    data: {
+      quantity,
+    },
+  });
+
+  const result = await prisma.cart.findMany({
+    where: {
+      customerId: customerInfo.id,
+    },
+    include: {
+      cartItems: true,
+    },
+  });
+
+  return result;
+};
+
+const deleteCartItem = async (user: IAuthUser, productId: string) => {
+  const customerInfo = await prisma.customer.findUniqueOrThrow({
+    where: {
+      email: user?.email,
+    },
+  });
+
+  const existingCart = await prisma.cart.findUniqueOrThrow({
+    where: {
+      customerId: customerInfo.id,
+    },
+    include: {
+      cartItems: true,
+    },
+  });
+
+  const existingCartItem = existingCart.cartItems.find(
+    (item) => item.productId === productId
   );
 
   if (!existingCartItem) {
@@ -140,7 +196,7 @@ const deleteCartItem = async (user: IAuthUser, cartItemId: string) => {
     where: {
       cartId_productId: {
         cartId: existingCart.id,
-        productId: cartItemId,
+        productId: productId,
       },
     },
   });
@@ -160,5 +216,6 @@ const deleteCartItem = async (user: IAuthUser, cartItemId: string) => {
 export const CartServices = {
   addToCart,
   getMyCart,
+  updateCartItemQuantity,
   deleteCartItem,
 };

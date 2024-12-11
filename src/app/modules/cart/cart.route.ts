@@ -16,6 +16,13 @@ router.post(
 
 router.get("/", auth(Role.CUSTOMER), CartControllers.getMyCart);
 
+router.patch(
+  "/:id",
+  auth(Role.CUSTOMER),
+  Validator.validateRequest(CartValidationSchemas.updateCartItemQuantity),
+  CartControllers.updateCartItemQuantity
+);
+
 router.delete("/:id", auth(Role.CUSTOMER), CartControllers.deleteCartItem);
 
 export const CartRoutes = router;

@@ -30,13 +30,33 @@ const getMyCart = catchAsync(
   }
 );
 
+const updateCartItemQuantity = catchAsync(
+  async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const user = req.user;
+    const productId = req.params.id;
+    const quantity = req.body.quantity;
+
+    const result = await CartServices.updateCartItemQuantity(
+      user as IAuthUser,
+      productId,
+      quantity
+    );
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Cart item updated successfully!",
+      data: result,
+    });
+  }
+);
+
 const deleteCartItem = catchAsync(
   async (req: Request & { user?: IAuthUser }, res: Response) => {
     const user = req.user;
-    const cartItemId = req.params.id;
+    const productId = req.params.id;
     const result = await CartServices.deleteCartItem(
       user as IAuthUser,
-      cartItemId
+      productId
     );
     sendResponse(res, {
       statusCode: 200,
@@ -50,5 +70,6 @@ const deleteCartItem = catchAsync(
 export const CartControllers = {
   addToCart,
   getMyCart,
+  updateCartItemQuantity,
   deleteCartItem,
 };
