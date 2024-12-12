@@ -13,9 +13,11 @@ const addToCart = z.object({
 
 const updateCartItemQuantity = z.object({
   body: z.object({
-    quantity: z.number({
-      required_error: "Quantity is required",
-    }),
+    quantity: z
+      .number({
+        required_error: "Quantity is required",
+      })
+      .positive({ message: "Quantity must be a positive number." }),
   }),
 });
 

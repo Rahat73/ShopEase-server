@@ -62,6 +62,15 @@ const addToCart = async (
             quantity: cartItem.quantity,
           },
         });
+
+        await tx.cart.update({
+          where: {
+            id: existingCart.id,
+          },
+          data: {
+            vendorId: productInfo.vendorId,
+          },
+        });
       }
     } else {
       await tx.cart.create({
