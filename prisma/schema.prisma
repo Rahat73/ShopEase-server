@@ -130,6 +130,9 @@ model Order {
   totalAmount Float       @default(0)
   discount    Float       @default(0)
   status      OrderStatus @default(PENDING)
+  address     String      @default("")
+  phone       String      @default("")
+  trxId       String?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment Confirmation</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: black;
+        color: white;
+      }
+      .payment-container {
+        border: 2px solid #ccc;
+        padding: 20px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="payment-container">
+      <h1>{{message}}</h1>
+      <h2>Thank you <i>{{cus_name}}</i>, for purchasing the post</h2>
+      <a style="margin-top: 10px" href="http://localhost:3000">Go Back</a>
+    </div>
+  </body>
+</html>

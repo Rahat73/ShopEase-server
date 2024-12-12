@@ -118,6 +118,9 @@ const getMyCart = async (user: IAuthUser) => {
         include: {
           product: true,
         },
+        orderBy: {
+          createdAt: "asc",
+        },
       },
     },
   });

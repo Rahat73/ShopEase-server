@@ -4,6 +4,7 @@ import { IAuthUser, IDataDisplayOptions } from "../../types";
 import { dataDisplayHelper } from "../../utils/data-display-helper";
 import prisma from "../../utils/prisma";
 import { orderSortableFields } from "./order.constant";
+import { IOrderFilterRequest } from "./order.interface";
 
 const createOrder = async (
   user: IAuthUser,
@@ -36,7 +37,11 @@ const createOrder = async (
 
   const totalAmount = productsDetails.reduce(
     (total, { productInfo, quantity }) => {
-      return total + (productInfo.price - productInfo.discount) * quantity;
+      return (
+        total +
+        (productInfo.price - (productInfo.price * productInfo.discount) / 100) *
+          quantity
+      );
     },
     0
   );
@@ -104,7 +109,11 @@ const getAllOrders = async (options: IDataDisplayOptions) => {
   };
 };
 
-const getMyOrders = async (user: IAuthUser, options: IDataDisplayOptions) => {
+const getMyOrders = async (
+  user: IAuthUser,
+  filters: IOrderFilterRequest,
+  options: IDataDisplayOptions
+) => {
   let userInfo;
 
   if (user?.role === "CUSTOMER") {
@@ -124,9 +133,20 @@ const getMyOrders = async (user: IAuthUser, options: IDataDisplayOptions) => {
   const { page, limit, skip, sortBy, sortOrder } =
     dataDisplayHelper.calculatePagination(options, orderSortableFields);
 
+  const andConditions: Prisma.OrderWhereInput[] = [];
+
+  if (Object.keys(filters).length > 0) {
+    andConditions.push({
+      AND: Object.entries(filters).map(([key, value]) => ({
+        [key]: value,
+      })),
+    });
+  }
+
   const whereConditions: Prisma.OrderWhereInput = {
     customerId: user?.role === "CUSTOMER" ? userInfo?.id : undefined,
     vendorId: user?.role === "VENDOR" ? userInfo?.id : undefined,
+    AND: andConditions,
   };
 
   const result = await prisma.order.findMany({
