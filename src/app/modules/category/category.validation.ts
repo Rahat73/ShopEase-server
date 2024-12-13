@@ -11,6 +11,14 @@ const addCategory = z.object({
   }),
 });
 
+const updateCategory = z.object({
+  body: z.object({
+    name: z.string().optional(),
+    description: z.string().optional(),
+  }),
+});
+
 export const CategoryValidationSchemas = {
   addCategory,
+  updateCategory,
 };

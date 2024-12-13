@@ -28,7 +28,25 @@ const getAllCategories = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const updateCategory = catchAsync(async (req: Request, res: Response) => {
+  const categoryId = req.params.categoryId;
+  const file = req.file as IFile;
+  const payload = req.body;
+  const result = await CategoryServices.updateCategory(
+    categoryId,
+    file,
+    payload
+  );
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Category updated successfully!",
+    data: result,
+  });
+});
+
 export const CategoryControllers = {
   addCategory,
   getAllCategories,
+  updateCategory,
 };

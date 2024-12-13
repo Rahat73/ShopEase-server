@@ -38,6 +38,15 @@ const getAllProducts = async (
     });
   }
 
+  andConditions.push({
+    vendor: {
+      isBlacklisted: false,
+      user: {
+        isSuspended: false,
+      },
+    },
+  });
+
   const whereConditons: Prisma.ProductWhereInput =
     andConditions.length > 0 ? { AND: andConditions } : {};
 

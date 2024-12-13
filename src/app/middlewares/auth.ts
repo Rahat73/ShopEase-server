@@ -4,10 +4,11 @@ import AppError from "../errors/app-error";
 import { jwtHelpers } from "../utils/jwt-helpers";
 import config from "../config";
 import prisma from "../utils/prisma";
+import { IAuthUser } from "../types";
 
 const auth = (...roles: string[]) => {
   return async (
-    req: Request & { user?: any },
+    req: Request & { user?: IAuthUser },
     res: Response,
     next: NextFunction
   ) => {
@@ -23,7 +24,7 @@ const auth = (...roles: string[]) => {
         config.jwt.jwt_secret as Secret
       );
 
-      req.user = verifiedUser;
+      req.user = verifiedUser as IAuthUser;
 
       await prisma.user.findUniqueOrThrow({
         where: {
@@ -33,7 +34,7 @@ const auth = (...roles: string[]) => {
       });
 
       if (roles.length && !roles.includes(verifiedUser.role)) {
-        throw new AppError(403, "Forbidden!");
+        throw new AppError(403, "You do not have permission!");
       }
       next();
     } catch (err) {

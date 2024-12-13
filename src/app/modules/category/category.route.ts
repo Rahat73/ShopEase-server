@@ -8,6 +8,8 @@ import { CategoryValidationSchemas } from "./category.validation";
 
 const router = Router();
 
+router.get("/", CategoryControllers.getAllCategories);
+
 router.post(
   "/",
   auth(Role.SUPER_ADMIN, Role.ADMIN),
@@ -16,6 +18,12 @@ router.post(
   CategoryControllers.addCategory
 );
 
-router.get("/", CategoryControllers.getAllCategories);
+router.patch(
+  "/:categoryId",
+  auth(Role.SUPER_ADMIN, Role.ADMIN),
+  fileUpload.single("file"),
+  Validator.validateRequestWithFiles(CategoryValidationSchemas.updateCategory),
+  CategoryControllers.updateCategory
+);
 
 export const CategoryRoutes = router;

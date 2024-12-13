@@ -17,11 +17,34 @@ const addCategory = async (
 };
 
 const getAllCategories = async (): Promise<Category[]> => {
-  const result = await prisma.category.findMany();
+  const result = await prisma.category.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  return result;
+};
+
+const updateCategory = async (
+  id: string,
+  file: IFile,
+  payload: Partial<Category>
+) => {
+  if (file) {
+    payload.icon = file.path;
+  }
+
+  const result = await prisma.category.update({
+    where: {
+      id: id,
+    },
+    data: payload,
+  });
   return result;
 };
 
 export const CategoryServices = {
   addCategory,
   getAllCategories,
+  updateCategory,
 };

@@ -24,7 +24,20 @@ const getVendorById = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const updateVendor = catchAsync(async (req: Request, res: Response) => {
+  const vendorId = req.params.vendorId;
+  const payload = req.body;
+  const result = await VendorServices.updateVendor(vendorId, payload);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Vendor updated successfully!",
+    data: result,
+  });
+});
+
 export const VendorControllers = {
   getAllVendors,
   getVendorById,
+  updateVendor,
 };
