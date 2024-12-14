@@ -173,6 +173,13 @@ const getMyProducts = async (
     orderBy: {
       [sortBy]: sortOrder,
     },
+    include: {
+      category: {
+        select: {
+          name: true,
+        },
+      },
+    },
   });
 
   const total = await prisma.product.count({

@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
+import { IAuthUser } from "../../types";
 import catchAsync from "../../utils/catch-async";
 import sendResponse from "../../utils/send-response";
 import { UserServices } from "./user.service";
-import { IAuthUser } from "../../types";
 
 const createAdmin = catchAsync(async (req: Request, res: Response) => {
   const result = await UserServices.createAdmin(req);
@@ -52,7 +52,6 @@ const getMyProfile = catchAsync(
 const updateMyProfie = catchAsync(
   async (req: Request & { user?: IAuthUser }, res: Response) => {
     const user = req.user;
-
     const result = await UserServices.updateMyProfie(user as IAuthUser, req);
 
     sendResponse(res, {

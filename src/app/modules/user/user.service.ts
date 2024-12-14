@@ -6,6 +6,7 @@ import config from "../../config";
 import { IAuthUser, IFile } from "../../types";
 import { jwtHelpers } from "../../utils/jwt-helpers";
 import prisma from "../../utils/prisma";
+import AppError from "../../errors/app-error";
 
 const createAdmin = async (req: Request) => {
   const file = req.file as IFile;
@@ -51,6 +52,16 @@ const createAdmin = async (req: Request) => {
 
 const createVendor = async (req: Request) => {
   const file = req.file as IFile;
+
+  const shopNameExists = await prisma.vendor.findUnique({
+    where: {
+      shopName: req.body.vendor.shopName,
+    },
+  });
+
+  if (shopNameExists) {
+    throw new AppError(409, "Shop name already exists!");
+  }
 
   if (file) {
     req.body.vendor.shopLogo = file.path;
@@ -187,7 +198,11 @@ const updateMyProfie = async (user: IAuthUser, req: Request) => {
 
   const file = req.file as IFile;
   if (file) {
-    req.body.profilePhoto = file.path;
+    if (userInfo.role === Role.VENDOR) {
+      req.body.shopLogo = file.path;
+    } else {
+      req.body.profilePhoto = file.path;
+    }
   }
 
   let profileInfo;

@@ -95,6 +95,20 @@ const getAllOrders = async (options: IDataDisplayOptions) => {
     },
     include: {
       orderItems: true,
+      customer: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
+      vendor: {
+        select: {
+          shopName: true,
+          phone: true,
+          address: true,
+          email: true,
+        },
+      },
     },
   });
 
@@ -158,6 +172,18 @@ const getMyOrders = async (
     },
     include: {
       orderItems: true,
+      customer: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
+      vendor: {
+        select: {
+          shopName: true,
+          phone: true,
+        },
+      },
     },
   });
 

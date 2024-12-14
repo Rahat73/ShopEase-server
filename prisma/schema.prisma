@@ -46,7 +46,7 @@ model Admin {
 model Vendor {
   id              String   @id @default(uuid())
   email           String   @unique
-  shopName        String
+  shopName        String   @unique
   shopLogo        String?
   shopDescription String
   phone           String

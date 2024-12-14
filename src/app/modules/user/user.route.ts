@@ -45,6 +45,8 @@ router.patch(
 router.patch(
   "/update-my-profile",
   auth(Role.SUPER_ADMIN, Role.ADMIN, Role.VENDOR, Role.CUSTOMER),
+  fileUpload.single("file"),
+  Validator.validateRequestWithFiles(UserValidationSchemas.updateMyProfie),
   UserControllers.updateMyProfie
 );
 

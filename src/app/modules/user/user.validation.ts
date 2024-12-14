@@ -62,8 +62,19 @@ const createCustomer = z.object({
   }),
 });
 
+const updateMyProfie = z.object({
+  body: z.object({
+    name: z.string().optional(),
+    phone: z.string().optional(),
+    address: z.string().optional(),
+    shopName: z.string().optional(),
+    shopDescription: z.string().optional(),
+  }),
+});
+
 export const UserValidationSchemas = {
   createAdmin,
   createVendor,
   createCustomer,
+  updateMyProfie,
 };
