@@ -58,9 +58,10 @@ model Vendor {
   user    User      @relation(fields: [email], references: [email])
   product Product[]
 
-  order  Order[]
-  cart   Cart[]
-  follow Follow[]
+  order       Order[]
+  cart        Cart[]
+  follow      Follow[]
+  reviewReply ReviewReply[]
 
   @@map("vendors")
 }
@@ -143,6 +144,7 @@ model Order {
   vendor   Vendor @relation(fields: [vendorId], references: [id])
 
   orderItems OrderItem[]
+  review     Review[]
 
   @@map("orders")
 }
@@ -227,13 +229,35 @@ model Review {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id])
+
   productId String
   product   Product @relation(fields: [productId], references: [id])
 
   customerId String
   customer   Customer @relation(fields: [customerId], references: [id])
 
+  reviewReply ReviewReply?
+
+  @@unique([orderId, customerId, productId])
   @@map("reviews")
+}
+
+model ReviewReply {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reviewId String @unique
+  review   Review @relation(fields: [reviewId], references: [id])
+
+  vendorId String
+  vendor   Vendor @relation(fields: [vendorId], references: [id])
+
+  @@unique([reviewId, vendorId])
+  @@map("review_replies")
 }
 
 enum Role {
