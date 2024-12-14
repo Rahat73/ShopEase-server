@@ -18,6 +18,7 @@ router.get(
   auth(Role.VENDOR, Role.CUSTOMER),
   OrderControllers.getMyOrders
 );
+router.get("/:orderId", auth(Role.CUSTOMER), OrderControllers.getOrderById);
 
 router.post(
   "/",

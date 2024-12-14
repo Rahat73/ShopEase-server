@@ -201,8 +201,43 @@ const getMyOrders = async (
   };
 };
 
+const getOrderById = async (user: IAuthUser, orderId: string) => {
+  const customerInfo = await prisma.customer.findUniqueOrThrow({
+    where: {
+      email: user?.email,
+    },
+  });
+
+  const result = await prisma.order.findUniqueOrThrow({
+    where: { id: orderId, customerId: customerInfo.id },
+    include: {
+      orderItems: {
+        include: {
+          product: true,
+        },
+      },
+      customer: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
+      vendor: {
+        select: {
+          shopName: true,
+          phone: true,
+          address: true,
+        },
+      },
+      review: true,
+    },
+  });
+  return result;
+};
+
 export const OrderServices = {
   createOrder,
   getAllOrders,
   getMyOrders,
+  getOrderById,
 };

@@ -56,8 +56,23 @@ const getMyOrders = catchAsync(
   }
 );
 
+const getOrderById = catchAsync(
+  async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const user = req.user;
+    const orderId = req.params.orderId;
+    const result = await OrderServices.getOrderById(user as IAuthUser, orderId);
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Order fetched successfully!",
+      data: result,
+    });
+  }
+);
+
 export const OrderControllers = {
   createOrder,
   getAllOrders,
   getMyOrders,
+  getOrderById,
 };

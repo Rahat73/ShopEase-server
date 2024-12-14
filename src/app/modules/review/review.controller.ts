@@ -42,8 +42,22 @@ const addReply = catchAsync(
   }
 );
 
+const getUnrepliedReviews = catchAsync(
+  async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const user = req.user;
+    const result = await ReviewServices.getUnrepliedReviews(user as IAuthUser);
+    res.status(200).json({
+      statusCode: 200,
+      success: true,
+      message: "Unreplied reviews fetched successfully!",
+      data: result,
+    });
+  }
+);
+
 export const ReviewControllers = {
   addReview,
   getProductReviews,
   addReply,
+  getUnrepliedReviews,
 };

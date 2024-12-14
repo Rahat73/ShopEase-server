@@ -89,8 +89,34 @@ const addReply = async (
   return result;
 };
 
+const getUnrepliedReviews = async (user: IAuthUser) => {
+  const vendorInfo = await prisma.vendor.findUniqueOrThrow({
+    where: {
+      email: user?.email,
+      isBlacklisted: false,
+    },
+  });
+
+  const result = await prisma.review.findMany({
+    where: {
+      reviewReply: null,
+      product: {
+        vendorId: vendorInfo.id,
+      },
+    },
+    include: {
+      order: true,
+      product: true,
+      customer: true,
+    },
+  });
+
+  return result;
+};
+
 export const ReviewServices = {
   addReview,
   getProductReviews,
   addReply,
+  getUnrepliedReviews,
 };

@@ -224,7 +224,7 @@ model RecentProduct {
 
 model Review {
   id        String   @id @default(uuid())
-  rating    Int      @default(0)
+  rating    Float    @default(0)
   comment   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
