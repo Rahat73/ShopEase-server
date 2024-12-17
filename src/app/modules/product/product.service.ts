@@ -52,16 +52,17 @@ const getAllProducts = async (
 
   let result;
 
+  const whereClauses = `WHERE v."isBlacklisted" = false AND u."isSuspended" = false`;
+
   const discountedPriceQuery = `
-  SELECT p.*, (p.price - (p.price * p.discount / 100)) AS discountedPrice
-  FROM products p
-  ${
-    Object.keys(whereConditons).length
-      ? `WHERE ${JSON.stringify(whereConditons)}`
-      : ""
-  }
-  ORDER BY discountedPrice ${sortOrder === "asc" ? "ASC" : "DESC"}
-  LIMIT ${limit} OFFSET ${skip};
+    SELECT p.*, (p.price - (p.price * p.discount / 100)) AS discountedPrice
+    FROM "products" p
+    LEFT JOIN "vendors" v ON p."vendorId" = v."id"
+    LEFT JOIN "users" u ON v."email" = u."email"
+    ${whereClauses}
+    ORDER BY discountedPrice ${sortOrder === "asc" ? "ASC" : "DESC"}
+    LIMIT ${limit}
+    OFFSET ${skip};
 `;
 
   if (sortBy === "price") {
@@ -83,6 +84,90 @@ const getAllProducts = async (
       },
     });
   }
+
+  const total = await prisma.product.count({
+    where: whereConditons,
+  });
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
+};
+
+const getAllProductsWithVendorPriority = async (
+  user: IAuthUser,
+  options: IDataDisplayOptions
+) => {
+  const customerInfo = await prisma.customer.findUniqueOrThrow({
+    where: {
+      email: user?.email,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  const { limit, page, skip } = dataDisplayHelper.calculatePagination(
+    options,
+    productSortableFields
+  );
+
+  const andConditions: Prisma.ProductWhereInput[] = [];
+
+  andConditions.push({
+    vendor: {
+      isBlacklisted: false,
+      user: {
+        isSuspended: false,
+      },
+    },
+  });
+
+  const whereConditons: Prisma.ProductWhereInput =
+    andConditions.length > 0 ? { AND: andConditions } : {};
+
+  const result = await prisma.product.findMany({
+    where: whereConditons,
+    skip,
+    take: limit,
+    include: {
+      category: {
+        select: {
+          name: true,
+        },
+      },
+      vendor: {
+        include: {
+          follow: {
+            where: {
+              customerId: customerInfo.id,
+            },
+            select: {
+              customerId: true,
+              vendorId: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: [
+      {
+        vendor: {
+          follow: {
+            _count: "desc",
+          },
+        },
+      },
+      {
+        createdAt: "desc",
+      },
+    ],
+  });
 
   const total = await prisma.product.count({
     where: whereConditons,
@@ -284,11 +369,43 @@ const deleteProduct = async (user: IAuthUser, productId: string) => {
   return result;
 };
 
+const duplicateProduct = async (user: IAuthUser, productId: string) => {
+  const vendorInfo = await prisma.vendor.findUniqueOrThrow({
+    where: {
+      email: user?.email,
+      isBlacklisted: false,
+    },
+  });
+
+  const productInfo = await prisma.product.findUniqueOrThrow({
+    where: {
+      id: productId,
+      vendorId: vendorInfo.id,
+    },
+  });
+
+  const result = await prisma.product.create({
+    data: {
+      name: productInfo.name,
+      description: productInfo.description,
+      price: productInfo.price,
+      discount: productInfo.discount,
+      inventoryCount: productInfo.inventoryCount,
+      images: productInfo.images,
+      categoryId: productInfo.categoryId,
+      vendorId: vendorInfo.id,
+    },
+  });
+  return result;
+};
+
 export const ProductServices = {
   getAllProducts,
+  getAllProductsWithVendorPriority,
   getProductById,
   getMyProducts,
   addProduct,
   updateProduct,
   deleteProduct,
+  duplicateProduct,
 };

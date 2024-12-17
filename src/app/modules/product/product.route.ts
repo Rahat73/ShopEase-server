@@ -10,6 +10,12 @@ const router = Router();
 
 router.get("/", ProductControllers.getAllProducts);
 
+router.get(
+  "/vendor-priority",
+  auth(Role.CUSTOMER),
+  ProductControllers.getAllProductsWithVendorPriority
+);
+
 router.get("/my-products", auth(Role.VENDOR), ProductControllers.getMyProducts);
 
 router.get("/:productId", ProductControllers.getProductById);
@@ -34,6 +40,12 @@ router.delete(
   "/:productId",
   auth(Role.VENDOR),
   ProductControllers.deleteProduct
+);
+
+router.post(
+  "/duplicate-product",
+  auth(Role.VENDOR),
+  ProductControllers.duplicateProduct
 );
 
 export const ProductRoutes = router;

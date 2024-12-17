@@ -7,13 +7,13 @@ import { ReviewControllers } from "./review.controller";
 
 const router = Router();
 
-router.get("/:productId", ReviewControllers.getProductReviews);
-
 router.get(
   "/unreplied-reviews",
   auth(Role.VENDOR),
   ReviewControllers.getUnrepliedReviews
 );
+
+router.get("/:productId", ReviewControllers.getProductReviews);
 
 router.post(
   "/",

@@ -19,9 +19,9 @@ export const initiatePayment = async ({
     const response = await axios.post(config.amarpay.payment_url!, {
       store_id: config.amarpay.store_id,
       tran_id,
-      success_url: `http://localhost:5000/api/payment/confirmation?trxId=${tran_id}&orderId=${order_id}&status=successful`,
-      fail_url: `http://localhost:5000/api/payment/confirmation?trxId=${tran_id}&orderId=${order_id}&status=failed`,
-      cancel_url: "http://localhost:3000",
+      success_url: `https://shop-ease-server-pi.vercel.app/api/payment/confirmation?trxId=${tran_id}&orderId=${order_id}&status=successful`,
+      fail_url: `https://shop-ease-server-pi.vercel.app/api/payment/confirmation?trxId=${tran_id}&orderId=${order_id}&status=failed`,
+      cancel_url: "https://shopease-xi.vercel.app",
       amount,
       currency: "USD",
       signature_key: config.amarpay.signature_key,

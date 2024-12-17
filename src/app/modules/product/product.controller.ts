@@ -21,6 +21,25 @@ const getAllProducts = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getAllProductsWithVendorPriority = catchAsync(
+  async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const user = req.user;
+    const options = pick(req.query, dataDisplayOptions);
+
+    const result = await ProductServices.getAllProductsWithVendorPriority(
+      user as IAuthUser,
+      options
+    );
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Products fetched successfully!",
+      data: result?.data,
+      meta: result?.meta,
+    });
+  }
+);
+
 const getProductById = catchAsync(async (req: Request, res: Response) => {
   const productId = req.params.productId;
   const result = await ProductServices.getProductById(productId);
@@ -116,11 +135,30 @@ const deleteProduct = catchAsync(
   }
 );
 
+const duplicateProduct = catchAsync(
+  async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const user = req.user;
+    const productId = req.body.productId;
+    const result = await ProductServices.duplicateProduct(
+      user as IAuthUser,
+      productId
+    );
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Product duplicated successfully!",
+      data: result,
+    });
+  }
+);
+
 export const ProductControllers = {
   getAllProducts,
+  getAllProductsWithVendorPriority,
   getProductById,
   getMyProducts,
   addProduct,
   updateProduct,
   deleteProduct,
+  duplicateProduct,
 };

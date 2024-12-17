@@ -26,4 +26,10 @@ router.patch(
   CategoryControllers.updateCategory
 );
 
+router.delete(
+  "/:categoryId",
+  auth(Role.SUPER_ADMIN, Role.ADMIN),
+  CategoryControllers.deleteCategory
+);
+
 export const CategoryRoutes = router;

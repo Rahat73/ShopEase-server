@@ -46,6 +46,9 @@ const purchaseConfirmation = async (
 
   let orderInfo;
 
+  const filePath = join(__dirname, "../../../../public/confirmation.html");
+  let template = readFileSync(filePath, "utf-8");
+
   if (verifyResponse && verifyResponse.pay_status === "Successful") {
     orderInfo = await prisma.order.findUniqueOrThrow({
       where: {
@@ -66,15 +69,18 @@ const purchaseConfirmation = async (
       },
     });
 
-    const filePath = join(__dirname, "../../../../public/confirmation.html");
-    let template = readFileSync(filePath, "utf-8");
-
     template = template
       .replace("{{message}}", `Payment ${status}`)
-      .replace("{{cus_name}}", `${orderInfo.customer.name || "N/A"}`);
-
-    return template;
+      .replace(
+        "{{message2}}",
+        `Thank you <i>${orderInfo.customer.name}</i>, for ordering.`
+      );
+  } else {
+    template = template.replace("{{message}}", `Payment ${status}`);
+    template = template.replace("{{message2}}", `Please try again later`);
   }
+
+  return template;
 };
 
 export const PaymentServices = {

@@ -23,6 +23,9 @@ const getVendorById = async (id: string) => {
     where: {
       id: id,
     },
+    include: {
+      follow: true,
+    },
   });
   return result;
 };

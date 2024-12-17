@@ -24,6 +24,9 @@ const globalErrorHandler = (
       statusCode = 409;
       message = "Duplicate Key error";
       error = err.meta;
+    } else if (err.code === "P2003") {
+      statusCode = 409;
+      message = "Foreign Key error";
     } else if (err.code === "P2025") {
       statusCode = 404;
       message = "Record not found";

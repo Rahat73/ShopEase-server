@@ -12,11 +12,9 @@
         height: 100vh;
         margin: 0;
         font-family: Arial, sans-serif;
-        background-color: black;
-        color: white;
       }
       .payment-container {
-        border: 2px solid #ccc;
+        border: 2px solid #999;
         padding: 20px;
         text-align: center;
       }
@@ -25,8 +23,12 @@
   <body>
     <div class="payment-container">
       <h1>{{message}}</h1>
-      <h2>Thank you <i>{{cus_name}}</i>, for purchasing the post</h2>
-      <a style="margin-top: 10px" href="http://localhost:3000">Go Back</a>
+      <h2>{{message2}}</h2>
+      <a
+        style="margin-top: 10px"
+        href="https://shopease-xi.vercel.app/user/order/order-history"
+        >Go Back</a
+      >
     </div>
   </body>
 </html>
