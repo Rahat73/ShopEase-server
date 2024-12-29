@@ -5,7 +5,13 @@ import { Role } from "@prisma/client";
 
 const router = Router();
 
-router.get("/", VendorControllers.getAllVendors);
+router.get(
+  "/",
+  auth(Role.SUPER_ADMIN, Role.ADMIN),
+  VendorControllers.getAllVendors
+);
+
+router.get("/detailed-info", VendorControllers.getVendorsDetailedInfo);
 
 router.get("/:vendorId", VendorControllers.getVendorById);
 

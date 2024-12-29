@@ -18,6 +18,26 @@ const getAllVendors = async () => {
   return result;
 };
 
+const getVendorsDetailedInfo = async () => {
+  const result = await prisma.vendor.findMany({
+    include: {
+      _count: {
+        select: { product: true },
+      },
+    },
+    where: {
+      isBlacklisted: false,
+      user: {
+        isSuspended: false,
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  return result;
+};
+
 const getVendorById = async (id: string) => {
   const result = await prisma.vendor.findUniqueOrThrow({
     where: {
@@ -43,6 +63,7 @@ const updateVendor = async (id: string, payload: Partial<Vendor>) => {
 
 export const VendorServices = {
   getAllVendors,
+  getVendorsDetailedInfo,
   getVendorById,
   updateVendor,
 };
