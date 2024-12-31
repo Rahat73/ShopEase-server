@@ -12,6 +12,7 @@ import { PaymentRoutes } from "../modules/payment/payment.route";
 import { CustomerRoutes } from "../modules/customer/customer.route";
 import { ReviewRoutes } from "../modules/review/review.route";
 import { SummaryRoutes } from "../modules/summary/summary.route";
+import { CouponRoutes } from "../modules/coupon/coupon.route";
 
 const router = express.Router();
 
@@ -68,34 +69,10 @@ const moduleRoutes = [
     path: "/summary",
     route: SummaryRoutes,
   },
-  //   {
-  //     path: "/admin",
-  //     route: AdminRoutes,
-  //   },
-  //   {
-  //     path: "/specialties",
-  //     route: SpecialtiesRoutes,
-  //   },
-  //   {
-  //     path: "/doctor",
-  //     route: DoctorRoutes,
-  //   },
-  //   {
-  //     path: "/patient",
-  //     route: PatientRoutes,
-  //   },
-  //   {
-  //     path: "/schedule",
-  //     route: ScheduleRoutes,
-  //   },
-  //   {
-  //     path: "/doctor-schedule",
-  //     route: DoctorScheduleRoutes,
-  //   },
-  //   {
-  //     path: "/appointment",
-  //     route: AppointmentRoutes,
-  //   },
+  {
+    path: "/coupon",
+    route: CouponRoutes,
+  },
 ];
 
 moduleRoutes.forEach((route) => router.use(route.path, route.route));

@@ -261,6 +261,16 @@ model ReviewReply {
   @@map("review_replies")
 }
 
+model Coupon {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  discount  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("coupons")
+}
+
 enum Role {
   SUPER_ADMIN
   ADMIN
